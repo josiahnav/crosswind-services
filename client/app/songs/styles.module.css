@@ -1,0 +1,15 @@
+.title-column {
+    min-width: 500px;
+}
+
+.bpm-column {
+    min-width: 125px;
+}
+
+.created-column {
+    min-width: 200px;
+}
+
+.last-scheduled-column {
+    min-width: 200px;
+}

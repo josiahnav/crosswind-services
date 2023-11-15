@@ -3,11 +3,7 @@ import SongForTableDto from "@/models/songs/SongForTableDto";
 
 import styles from "./styles.module.css";
 
-interface Props {
-    songs: SongForTableDto[]
-}
-
-export default function SongTable(props: Props) {
+export default function SongTable(props: { songs: SongForTableDto[] }) {
     const formatDate = (date: Date): string => {
         return new Intl.DateTimeFormat('en-US', {
             year: 'numeric',
@@ -38,9 +34,9 @@ export default function SongTable(props: Props) {
                     return (
                         <tr key={s.id}>
                             <td className="py-1.5 pl-2.5 border-t border-t-blue-300">{s.title}</td>
-                            <td className="py-1.5 border-t border-t-blue-300">130</td>
-                            <td className="py-1.5 border-t border-t-blue-300">{formatDate(new Date(s.created))}</td>
-                            <td className="py-1.5 border-t border-t-blue-300">{formatDate(new Date(s.lastScheduled))}</td>
+                            <td className="py-1.5 border-t border-t-blue-300 text-neutral-500">130</td>
+                            <td className="py-1.5 border-t border-t-blue-300 text-neutral-500">{formatDate(new Date(s.created))}</td>
+                            <td className="py-1.5 border-t border-t-blue-300 text-neutral-500">{formatDate(new Date(s.lastScheduled))}</td>
                         </tr>
                     )
                 })

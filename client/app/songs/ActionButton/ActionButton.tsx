@@ -1,8 +1,9 @@
 'use client'
 
 import React from 'react';
+import {ActionButtonProps} from "@/interfaces/ActionButton.interfaces";
 
-export default function ActionButton(props: { title: string, subtitle: string, onClick: () => void }) {
+export default function ActionButton(props: ActionButtonProps) {
     return (
         <div
             className="transition border border-blue-500 rounded w-56 py-6 pl-5 cursor-pointer

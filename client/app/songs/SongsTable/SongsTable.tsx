@@ -1,9 +1,9 @@
 import React from 'react';
-import SongForTableDto from "@/models/songs/SongForTableDto";
 
 import styles from "./styles.module.css";
+import {SongsTableProps} from "@/interfaces/SongsTable.interfaces";
 
-export default function SongsTable(props: { songs: SongForTableDto[] }) {
+export default function SongsTable(props: SongsTableProps) {
     const formatDate = (date: Date): string => {
         return new Intl.DateTimeFormat('en-US', {
             year: 'numeric',

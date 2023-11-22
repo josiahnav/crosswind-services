@@ -3,7 +3,7 @@ import SongForTableDto from "@/models/songs/SongForTableDto";
 
 import styles from "./styles.module.css";
 
-export default function SongTable(props: { songs: SongForTableDto[] }) {
+export default function SongsTable(props: { songs: SongForTableDto[] }) {
     const formatDate = (date: Date): string => {
         return new Intl.DateTimeFormat('en-US', {
             year: 'numeric',

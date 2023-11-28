@@ -16,7 +16,7 @@ namespace CrosswindServices.Data.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.13")
+                .HasAnnotation("ProductVersion", "7.0.2")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             modelBuilder.Entity("CrosswindServices.Data.Entities.Song", b =>
@@ -25,6 +25,12 @@ namespace CrosswindServices.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasColumnName("id");
+
+                    b.Property<decimal>("Bpm")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("DECIMAL(5,2)")
+                        .HasDefaultValue(0m)
+                        .HasColumnName("bpm");
 
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime(6)")

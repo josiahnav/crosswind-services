@@ -34,7 +34,7 @@ export default function SongsTable(props: SongsTableProps) {
                     return (
                         <tr key={s.id}>
                             <td className="py-1.5 pl-2.5 border-t border-t-blue-300">{s.title}</td>
-                            <td className="py-1.5 border-t border-t-blue-300 text-neutral-500">130</td>
+                            <td className="py-1.5 border-t border-t-blue-300 text-neutral-500">{s.bpm || '-'}</td>
                             <td className="py-1.5 border-t border-t-blue-300 text-neutral-500">{formatDate(new Date(s.created))}</td>
                             <td className="py-1.5 border-t border-t-blue-300 text-neutral-500">{formatDate(new Date(s.lastScheduled))}</td>
                         </tr>

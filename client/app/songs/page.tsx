@@ -9,7 +9,8 @@ export const metadata: Metadata = {
 };
 
 async function getData(): Promise<SongForTableDto[]> {
-    const res = await fetch('http://localhost:5186/api/song', {next: {revalidate: 2}});
+    // revalidate: 0 ensures that the data is not cached--keep this for dev purposes for now
+    const res = await fetch('http://localhost:5186/api/song', {next: {revalidate: 0}});
     return await res.json();
 }
 

@@ -27,6 +27,8 @@ public class CrosswindServicesDbContext : DbContext
                 .HasColumnName("title")
                 .IsRequired()
                 .HasMaxLength(30);
+            entity.Property(s => s.Composer)
+                .HasColumnName("composer");
             entity.Property(s => s.Bpm)
                 .HasColumnName("bpm")
                 .HasColumnType("DECIMAL(5,2)")

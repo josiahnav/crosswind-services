@@ -32,6 +32,10 @@ namespace CrosswindServices.Data.Migrations
                         .HasDefaultValue(0m)
                         .HasColumnName("bpm");
 
+                    b.Property<string>("Composer")
+                        .HasColumnType("longtext")
+                        .HasColumnName("composer");
+
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime(6)")
                         .HasColumnName("created");

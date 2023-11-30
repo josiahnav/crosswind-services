@@ -15,7 +15,7 @@ export default function SongsPage() {
         const getSongs = async () => {
             setIsLoadingSongs(true);
             const response = await fetch('http://localhost:5186/api/song');
-            if(response.ok) {
+            if (response.ok) {
                 const songs = await response.json();
                 setSongs(songs);
             }
@@ -31,9 +31,11 @@ export default function SongsPage() {
 
     return (
         <div>
-            <h2 className="text-2xl mb-6">What would you like to do...?</h2>
-            <SongsActions songs={songs} onAddSong={handleAddSong}></SongsActions>
-            {!isLoadingSongs && <SongsTable songs={songs}></SongsTable>}
+            {!isLoadingSongs ? <div>
+                <h2 className="text-2xl mb-6">What would you like to do...?</h2>
+                <SongsActions songs={songs} onAddSong={handleAddSong}></SongsActions>
+                <SongsTable songs={songs}></SongsTable>
+            </div> : <h2 className="text-2xl text-zinc-500">Loading songs...</h2>}
         </div>
     );
 };

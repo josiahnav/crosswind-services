@@ -33,7 +33,7 @@ export default function SongsActions(props: SongsActionsProps) {
     }, []);
 
     return (
-        <div className="flex flex-row gap-6 mb-10">
+        <div className="flex flex-row gap-6 mb-10 mx-auto">
             <AddSongModal ref={addSongDialogRef}
                           onClick={handleAddDialogClick}
                           onCancelClick={handleAddSongModalCancelClick}

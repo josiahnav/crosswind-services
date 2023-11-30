@@ -1,27 +1,39 @@
-import React from 'react';
-import {Metadata} from "next";
+'use client'
+
+import React, {useCallback, useEffect, useState} from 'react';
 import SongForTableDto from "@/models/songs/SongForTableDto";
 import SongsTable from "@/app/songs/SongsTable/SongsTable";
 import SongsActions from "@/app/songs/SongsActions/SongsActions";
 
-export const metadata: Metadata = {
-    title: 'Songs'
-};
+export default function SongsPage() {
 
-async function getData(): Promise<SongForTableDto[]> {
-    // revalidate: 0 ensures that the data is not cached--keep this for dev purposes for now
-    const res = await fetch('http://localhost:5186/api/song', {next: {revalidate: 0}});
-    return await res.json();
-}
+    const [songs, setSongs] = useState<SongForTableDto[]>([]);
+    const [isLoadingSongs, setIsLoadingSongs] = useState<boolean>(true);
+    const [hasError, setHasError] = useState<boolean>(false);
 
-export default async function SongsPage() {
-    const data = await getData();
+    useEffect(() => {
+        const getSongs = async () => {
+            setIsLoadingSongs(true);
+            const response = await fetch('http://localhost:5186/api/song');
+            if(response.ok) {
+                const songs = await response.json();
+                setSongs(songs);
+            }
+            setIsLoadingSongs(false);
+        }
+        // noinspection JSIgnoredPromiseFromCall
+        getSongs();
+    }, []);
+
+    const handleAddSong = useCallback((createdSong: SongForTableDto) => {
+        setSongs(prevState => [...prevState, createdSong]);
+    }, [])
 
     return (
         <div>
             <h2 className="text-2xl mb-6">What would you like to do...?</h2>
-            <SongsActions></SongsActions>
-            <SongsTable songs={data}></SongsTable>
+            <SongsActions songs={songs} onAddSong={handleAddSong}></SongsActions>
+            {!isLoadingSongs && <SongsTable songs={songs}></SongsTable>}
         </div>
     );
 };

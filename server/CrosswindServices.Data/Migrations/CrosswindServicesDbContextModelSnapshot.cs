@@ -26,21 +26,20 @@ namespace CrosswindServices.Data.Migrations
                         .HasColumnType("int")
                         .HasColumnName("id");
 
-                    b.Property<decimal>("Bpm")
-                        .ValueGeneratedOnAdd()
+                    b.Property<decimal?>("Bpm")
                         .HasColumnType("DECIMAL(5,2)")
-                        .HasDefaultValue(0m)
                         .HasColumnName("bpm");
 
                     b.Property<string>("Composer")
-                        .HasColumnType("longtext")
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)")
                         .HasColumnName("composer");
 
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime(6)")
                         .HasColumnName("created");
 
-                    b.Property<DateTime>("LastScheduled")
+                    b.Property<DateTime?>("LastScheduled")
                         .HasColumnType("datetime(6)")
                         .HasColumnName("last_scheduled");
 

@@ -28,17 +28,16 @@ public class CrosswindServicesDbContext : DbContext
                 .IsRequired()
                 .HasMaxLength(30);
             entity.Property(s => s.Composer)
-                .HasColumnName("composer");
+                .HasColumnName("composer")
+                .HasMaxLength(100);
             entity.Property(s => s.Bpm)
                 .HasColumnName("bpm")
-                .HasColumnType("DECIMAL(5,2)")
-                .HasDefaultValue(0);
+                .HasColumnType("DECIMAL(5,2)");
             entity.Property(s => s.Created)
                 .HasColumnName("created")
                 .IsRequired();
             entity.Property(s => s.LastScheduled)
-                .HasColumnName("last_scheduled")
-                .IsRequired();
+                .HasColumnName("last_scheduled");
         });
 
         base.OnModelCreating(modelBuilder);

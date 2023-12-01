@@ -35,7 +35,7 @@ export default function SongsPage() {
                 <h2 className="text-2xl mb-6">What would you like to do...?</h2>
                 <SongsActions songs={songs} onAddSong={handleAddSong}></SongsActions>
                 <SongsTable songs={songs}></SongsTable>
-            </div> : <h2 className="text-2xl text-zinc-500">Loading songs...</h2>}
+            </div> : <h2 className="text-2xl text-zinc-400">Loading songs...</h2>}
         </div>
     );
 };

@@ -17,7 +17,6 @@ export default function SongsPage() {
             const response = await fetch('http://localhost:5186/api/song');
             if (response.ok) {
                 const songs = await response.json();
-                console.log('songs', songs);
                 setSongs(songs);
             }
             setIsLoadingSongs(false);

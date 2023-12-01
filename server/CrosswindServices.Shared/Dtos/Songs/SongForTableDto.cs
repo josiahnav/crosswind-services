@@ -6,5 +6,5 @@ public class SongForTableDto
     public string? Title { get; set; }
     public double? Bpm { get; set; }
     public DateTime Created { get; set; }
-    public DateTime LastScheduled { get; set; }
+    public DateTime? LastScheduled { get; init; }
 }

@@ -34,7 +34,8 @@ export default function SongsPage() {
             {!isLoadingSongs ? <div>
                 <h2 className="text-2xl mb-6">What would you like to do...?</h2>
                 <SongsActions songs={songs} onAddSong={handleAddSong}></SongsActions>
-                <SongsTable songs={songs}></SongsTable>
+                {songs.length ? <SongsTable songs={songs}></SongsTable> : <h2>No existing songs. Please add a song to
+                continue.</h2>}
             </div> : <h2 className="text-2xl text-zinc-400">Loading songs...</h2>}
         </div>
     );

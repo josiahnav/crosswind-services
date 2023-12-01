@@ -4,6 +4,7 @@ import React, {forwardRef, useState} from 'react';
 import Modal from "@/components/modals/Modal";
 import {AddSongModalProps} from "@/interfaces/AddSongModal.interfaces";
 import styles from "./AddSongModal.module.css";
+import {CreateSongDto} from "@/models/songs/CreateSongDto";
 
 const AddSongModal = forwardRef<HTMLDialogElement, AddSongModalProps>(function AddSongModal(props, ref) {
 
@@ -23,7 +24,7 @@ const AddSongModal = forwardRef<HTMLDialogElement, AddSongModalProps>(function A
     const handleInputChange = (identifier: string, value: any) => {
         // Ensures that the user cannot enter a BPM greater than 999
         if (identifier == "bpm") {
-            value = Number(value) <= maxBpm ? value : maxBpm.toString()
+            value = value <= maxBpm ? value : maxBpm;
         }
 
         setFormValues(prevState => ({
@@ -46,10 +47,8 @@ const AddSongModal = forwardRef<HTMLDialogElement, AddSongModalProps>(function A
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        const formData = new FormData(event.target as HTMLFormElement);
-        const formEntries = Object.fromEntries(formData.entries());
 
-        if (formEntries.title.toString().length == 0) {
+        if (formValues.title.length == 0) {
             setDidEdit(prevState => ({
                 ...prevState,
                 title: true
@@ -57,12 +56,18 @@ const AddSongModal = forwardRef<HTMLDialogElement, AddSongModalProps>(function A
             return;
         }
 
+        const dto: CreateSongDto = {
+           title: formValues.title,
+           composer: formValues.composer.length > 0 ? formValues.composer : undefined,
+           bpm: formValues.bpm.length > 0 ? parseFloat(formValues.bpm) : undefined
+        };
+
         let response = await fetch('http://localhost:5186/api/song', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(formEntries)
+            body: JSON.stringify(dto)
         });
 
         if(response.ok) {

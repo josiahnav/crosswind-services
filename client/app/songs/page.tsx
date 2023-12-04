@@ -14,7 +14,8 @@ export default function SongsPage() {
     useEffect(() => {
         const getSongs = async () => {
             setIsLoadingSongs(true);
-            const response = await fetch('http://localhost:5186/api/song');
+            // const response = await fetch('http://localhost:5186/api/song');
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/song`)
             if (response.ok) {
                 const songs = await response.json();
                 setSongs(songs);

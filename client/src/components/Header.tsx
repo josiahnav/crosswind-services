@@ -1,0 +1,5 @@
+export default function Header() {
+    return (
+        <header className="h-11 bg-blue-500 mb-10"></header>
+    );
+}

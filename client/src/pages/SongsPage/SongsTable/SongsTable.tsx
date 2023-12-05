@@ -6,7 +6,7 @@ import {faTrash} from "@fortawesome/free-solid-svg-icons";
 import DeleteSongModal from "../../../components/modals/DeleteSongModal/DeleteSongModal.tsx";
 
 export default function SongsTable(props: SongsTableProps) {
-    const [selectedId, setSelectedId] = useState<number>();
+    // const [selectedId, setSelectedId] = useState<number>();
     const [selectedTitle, setSelectedTitle] = useState<string>('');
 
     const deleteSongDialogRef = useRef<HTMLDialogElement>(null);
@@ -20,7 +20,7 @@ export default function SongsTable(props: SongsTableProps) {
     };
 
     const handleDeleteClick = (index: number) => {
-        setSelectedId(props.songs[index].id);
+        // setSelectedId(props.songs[index].id);
         setSelectedTitle(props.songs[index].title);
         deleteSongDialogRef.current?.showModal();
     }
@@ -35,7 +35,7 @@ export default function SongsTable(props: SongsTableProps) {
         deleteSongDialogRef.current?.close();
     }, []);
 
-    const handleDeleteSong = useCallback((id: number) => {
+    const handleDeleteSong = useCallback(() => {
 
     }, [])
 

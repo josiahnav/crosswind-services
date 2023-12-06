@@ -2,7 +2,7 @@ import {forwardRef} from 'react';
 import Modal from "../Modal.tsx";
 import {DeleteSongModalProps} from "./DeleteSongModalProps.ts";
 
-const DeleteSongModal = forwardRef<HTMLDialogElement, DeleteSongModalProps>(function DeleteSongModal(props, ref){
+const DeleteSongModal = forwardRef<HTMLDialogElement, DeleteSongModalProps>(function DeleteSongModal(props, ref) {
     return (
         <Modal ref={ref} header="Delete Song" onClick={props.onClick}>
             <p>Are you sure you want to delete <b>{props.title}</b>?</p>
@@ -11,7 +11,7 @@ const DeleteSongModal = forwardRef<HTMLDialogElement, DeleteSongModalProps>(func
                 <button type="button" className="bg-zinc-500 text-white p-3 rounded w-32"
                         onClick={props.onCancelClick}>Cancel
                 </button>
-                <button className="bg-blue-500 text-white p-3 rounded w-32">Delete</button>
+                <button className="bg-blue-500 text-white p-3 rounded w-32" onClick={props.onDeleteSong}>Delete</button>
             </div>
         </Modal>
     );

@@ -55,12 +55,12 @@ const AddSongModal = forwardRef<HTMLDialogElement, AddSongModalProps>(function A
         }
 
         const dto: CreateSongDto = {
-           title: formValues.title,
-           composer: formValues.composer.length > 0 ? formValues.composer : undefined,
-           bpm: formValues.bpm.length > 0 ? parseFloat(formValues.bpm) : undefined
+            title: formValues.title,
+            composer: formValues.composer.length > 0 ? formValues.composer : undefined,
+            bpm: formValues.bpm.length > 0 ? parseFloat(formValues.bpm) : undefined
         };
 
-        let response = await fetch('http://localhost:5186/api/song', {
+        const response = await fetch(`${import.meta.env.VITE_PUBLIC_API_URL}/song`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -68,7 +68,7 @@ const AddSongModal = forwardRef<HTMLDialogElement, AddSongModalProps>(function A
             body: JSON.stringify(dto)
         });
 
-        if(response.ok) {
+        if (response.ok) {
             const createdSong = await response.json();
             props.onAddSong(createdSong);
         }

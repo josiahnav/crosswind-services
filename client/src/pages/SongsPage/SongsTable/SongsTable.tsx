@@ -6,7 +6,7 @@ import {faTrash} from "@fortawesome/free-solid-svg-icons";
 import DeleteSongModal from "../../../components/modals/DeleteSongModal/DeleteSongModal.tsx";
 
 export default function SongsTable(props: SongsTableProps) {
-    // const [selectedId, setSelectedId] = useState<number>();
+    const [selectedId, setSelectedId] = useState<number>();
     const [selectedTitle, setSelectedTitle] = useState<string>('');
 
     const deleteSongDialogRef = useRef<HTMLDialogElement>(null);
@@ -20,13 +20,13 @@ export default function SongsTable(props: SongsTableProps) {
     };
 
     const handleDeleteClick = (index: number) => {
-        // setSelectedId(props.songs[index].id);
+        setSelectedId(props.songs[index].id);
         setSelectedTitle(props.songs[index].title);
         deleteSongDialogRef.current?.showModal();
     }
 
     const handleDeleteDialogClick = useCallback((event: any) => {
-        if(event.target == deleteSongDialogRef.current) {
+        if (event.target == deleteSongDialogRef.current) {
             deleteSongDialogRef.current?.close();
         }
     }, []);
@@ -35,9 +35,26 @@ export default function SongsTable(props: SongsTableProps) {
         deleteSongDialogRef.current?.close();
     }, []);
 
-    const handleDeleteSong = useCallback(() => {
+    const handleDeleteSong = useCallback(async () => {
+        if (!selectedId) {
+            console.log('No song selected');
+            return;
+        }
 
-    }, [])
+        const url = `${import.meta.env.VITE_PUBLIC_API_URL}/song/${selectedId}`;
+        const response = await fetch(url, {
+            method: 'DELETE',
+            headers: {}
+        });
+
+        if (!response.ok) {
+            console.log(`Failed to delete ${selectedTitle}`);
+            return;
+        }
+
+        deleteSongDialogRef.current?.close();
+        props.onDeleteSong(selectedId!);
+    }, [props, selectedId, selectedTitle])
 
     return (
         <>

@@ -1,5 +1,6 @@
 import SongForTableDto from "../../../models/SongForTableDto.ts";
 
 export interface SongsTableProps {
-    songs: SongForTableDto[]
+    songs: SongForTableDto[],
+    onDeleteSong: (id: number) => void
 }

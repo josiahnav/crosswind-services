@@ -27,13 +27,18 @@ export default function SongsPage() {
         setSongs(prevState => [...prevState, createdSong]);
     }, [])
 
+    const handleDeleteSong = useCallback((id: number) => {
+        setSongs(prevState => [...prevState.filter(s => s.id != id)]);
+    }, []);
+
     return (
         <div className="flex flex-col self-start items-center">
             {!isLoadingSongs ? <div>
                 <h2 className="text-2xl mb-6">What would you like to do...?</h2>
                 <SongsActions songs={songs} onAddSong={handleAddSong}></SongsActions>
-                {songs.length ? <SongsTable songs={songs}></SongsTable> : <h2>No existing songs. Please add a song to
-                continue.</h2>}
+                {songs.length ? <SongsTable songs={songs} onDeleteSong={handleDeleteSong}></SongsTable> :
+                    <h2>No existing songs. Please add a song to
+                        continue.</h2>}
             </div> : <h2 className="text-2xl text-zinc-400">Loading songs...</h2>}
         </div>
     );

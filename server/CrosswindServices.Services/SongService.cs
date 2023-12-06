@@ -35,4 +35,16 @@ public class SongService : ISongService
         var result = await _songRepository.CreateSongAsync(_mapper.Map<Song>(createSongDto));
         return _mapper.Map<SongForTableDto>(result);
     }
+
+    public async Task DeleteSongAsync(int id)
+    {
+        try
+        {
+            await _songRepository.DeleteSongAsync(id);
+        }
+        catch (KeyNotFoundException)
+        {
+            throw new KeyNotFoundException($"Song id {id} does not exist");
+        }
+    }
 }

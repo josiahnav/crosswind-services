@@ -10,16 +10,16 @@ namespace CrosswindServices.Services.Tests;
 
 public class SongServiceTests
 {
-    private readonly Mock<ISongRepository> _songRepository;
+    private readonly Mock<ISongRepository> _songRepositoryMock;
     private readonly IMapper _mapper;
-    private readonly ISongService _songService;
+    private readonly ISongService _service;
 
     public SongServiceTests()
     {
-        _songRepository = new Mock<ISongRepository>();
+        _songRepositoryMock = new Mock<ISongRepository>();
         var config = new MapperConfiguration(cfg => { cfg.AddProfile<SongProfile>(); });
         _mapper = config.CreateMapper();
-        _songService = new SongService(_songRepository.Object, _mapper);
+        _service = new SongService(_songRepositoryMock.Object, _mapper);
     }
 
     [Fact]
@@ -57,13 +57,13 @@ public class SongServiceTests
                 LastScheduled = new DateTime(2023, 11, 2)
             }
         };
-        _songRepository.Setup(s => s.GetAllSongsAsync()).ReturnsAsync(songList);
+        _songRepositoryMock.Setup(s => s.GetAllSongsAsync()).ReturnsAsync(songList);
 
         // Act
-        var result = await _songService.GetAllSongsForTableAsync();
+        var result = await _service.GetAllSongsForTableAsync();
 
         // Assert
-        _songRepository.Verify(s => s.GetAllSongsAsync(), Times.Once);
+        _songRepositoryMock.Verify(s => s.GetAllSongsAsync(), Times.Once);
         Assert.NotEmpty(result);
         Assert.IsType<List<SongForTableDto>>(result);
 
@@ -81,13 +81,13 @@ public class SongServiceTests
     public async Task GetAllSongsForTable_ReturnsEmptyList_WhenDoesNotExists()
     {
         // Arrange
-        _songRepository.Setup(s => s.GetAllSongsAsync()).ReturnsAsync(new List<Song>());
+        _songRepositoryMock.Setup(s => s.GetAllSongsAsync()).ReturnsAsync(new List<Song>());
 
         // Act
-        var result = await _songService.GetAllSongsForTableAsync();
+        var result = await _service.GetAllSongsForTableAsync();
 
         // Assert
-        _songRepository.Verify(s => s.GetAllSongsAsync(), Times.Once);
+        _songRepositoryMock.Verify(s => s.GetAllSongsAsync(), Times.Once);
         Assert.Empty(result);
     }
 
@@ -96,18 +96,31 @@ public class SongServiceTests
     {
         // Arrange
         var song = new CreateSongDto { Title = "Song 1" };
-        _songRepository.Setup(s => s.CreateSongAsync(It.IsAny<Song>())).ReturnsAsync(new Song
+        _songRepositoryMock.Setup(s => s.CreateSongAsync(It.IsAny<Song>())).ReturnsAsync(new Song
         {
             Id = 1,
             Title = song.Title
         });
 
         // Act
-        var result = await _songService.CreateSongAsync(song);
+        var result = await _service.CreateSongAsync(song);
 
         // Assert
         Assert.NotNull(result);
-        _songRepository.Verify(s => s.CreateSongAsync(It.IsAny<Song>()), Times.Once);
+        _songRepositoryMock.Verify(s => s.CreateSongAsync(It.IsAny<Song>()), Times.Once);
         Assert.Equal(song.Title, result.Title);
+    }
+
+    [Fact]
+    public async Task DeleteSongAsync_ThrowsKeyNotFoundException_WhenNotFound()
+    {
+        // Arrange
+        const int id = 1;
+        _songRepositoryMock.Setup(s => s.DeleteSongAsync(id)).ThrowsAsync(new KeyNotFoundException());
+
+        // Act
+
+        // Assert
+        await Assert.ThrowsAsync<KeyNotFoundException>(() => _service.DeleteSongAsync(id));
     }
 }

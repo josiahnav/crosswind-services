@@ -71,4 +71,23 @@ public class SongController : Controller
             return StatusCode(500, "An unknown error has occurred");
         }
     }
+
+    [HttpDelete("{id:int}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        try
+        {
+            await _songService.DeleteSongAsync(id);
+            return NoContent();
+        }
+        catch (KeyNotFoundException e)
+        {
+            return NotFound(e.Message);
+        }
+        catch (Exception)
+        {
+            return BadRequest($"An unknown error occurred while attempting to delete song {id}");
+        }
+    }
+    
 }

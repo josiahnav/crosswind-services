@@ -15,13 +15,13 @@ namespace CrosswindServices.Api.Tests;
 
 public class SongControllerTests
 {
-    private readonly Mock<ISongService> _songsService;
+    private readonly Mock<ISongService> _songsServiceMock;
     private readonly SongController _controller;
 
     public SongControllerTests()
     {
-        _songsService = new Mock<ISongService>();
-        _controller = new SongController(_songsService.Object, new NullLogger<SongController>());
+        _songsServiceMock = new Mock<ISongService>();
+        _controller = new SongController(_songsServiceMock.Object, new NullLogger<SongController>());
     }
 
     [Fact]
@@ -52,7 +52,7 @@ public class SongControllerTests
                 LastScheduled = new DateTime(2023, 10, 29)
             }
         };
-        _songsService.Setup(s => s.GetAllSongsForTableAsync()).ReturnsAsync(songForTableDtos);
+        _songsServiceMock.Setup(s => s.GetAllSongsForTableAsync()).ReturnsAsync(songForTableDtos);
 
         // Act
         var result = await _controller.GetAll();
@@ -69,7 +69,7 @@ public class SongControllerTests
         Assert.Equal(songForTableDtos, returnValue);
 
         // - Proper method call
-        _songsService.Verify(s => s.GetAllSongsForTableAsync(), Times.Once);
+        _songsServiceMock.Verify(s => s.GetAllSongsForTableAsync(), Times.Once);
     }
 
     [Fact]
@@ -77,7 +77,7 @@ public class SongControllerTests
     {
         // Arrange
         var songForTableDtos = new List<SongForTableDto>();
-        _songsService.Setup(s => s.GetAllSongsForTableAsync()).ReturnsAsync(songForTableDtos);
+        _songsServiceMock.Setup(s => s.GetAllSongsForTableAsync()).ReturnsAsync(songForTableDtos);
 
         // Act
         var result = await _controller.GetAll();
@@ -93,7 +93,7 @@ public class SongControllerTests
         Assert.Empty(returnValue);
 
         // - Proper method call
-        _songsService.Verify(s => s.GetAllSongsForTableAsync(), Times.Once);
+        _songsServiceMock.Verify(s => s.GetAllSongsForTableAsync(), Times.Once);
     }
 
     [Fact]
@@ -102,7 +102,7 @@ public class SongControllerTests
         // Arrange
         var song = new SongForTableDto
             { Id = 1, Title = "Song 1", Created = new DateTime(), LastScheduled = new DateTime() };
-        _songsService.Setup(s => s.GetSongForTableAsync(1)).ReturnsAsync(song);
+        _songsServiceMock.Setup(s => s.GetSongForTableAsync(1)).ReturnsAsync(song);
 
         // Act
         var result = await _controller.Get(1);
@@ -119,7 +119,7 @@ public class SongControllerTests
     public async Task Get_ReturnsNotFound_WhenDoesNotExist()
     {
         // Arrange
-        _songsService.Setup(s => s.GetSongForTableAsync(It.IsAny<int>())).ReturnsAsync((SongForTableDto?)null);
+        _songsServiceMock.Setup(s => s.GetSongForTableAsync(It.IsAny<int>())).ReturnsAsync((SongForTableDto?)null);
 
         // Act
         var result = await _controller.Get(1);
@@ -135,7 +135,7 @@ public class SongControllerTests
     {
         // Arrange
         var song = new CreateSongDto { Title = "Song 1" };
-        _songsService.Setup(s => s.CreateSongAsync(It.IsAny<CreateSongDto>())).ReturnsAsync(new SongForTableDto
+        _songsServiceMock.Setup(s => s.CreateSongAsync(It.IsAny<CreateSongDto>())).ReturnsAsync(new SongForTableDto
         {
             Id = 1,
             Title = song.Title,
@@ -193,5 +193,52 @@ public class SongControllerTests
         Assert.NotNull(longTitleResult);
         var longTitleBadRequestObjectResult = longTitleResult.Result as BadRequestObjectResult;
         Assert.NotNull(longTitleBadRequestObjectResult);
+    }
+
+    [Fact]
+    public async Task Delete_ReturnsNoContentResult_Success()
+    {
+        // Arrange
+        const int id = 1;
+
+        // Act
+        var result = await _controller.Delete(1);
+
+        // Assert
+        Assert.NotNull(result);
+        var noContentResult = result as NoContentResult;
+        Assert.NotNull(noContentResult);
+    }
+
+    [Fact]
+    public async Task Delete_ReturnsNotFoundObjectResult_WhenNotFound()
+    {
+        // Arrange
+        const int id = 1;
+        _songsServiceMock.Setup(s => s.DeleteSongAsync(id)).ThrowsAsync(new KeyNotFoundException());
+
+        // Act
+        var result = await _controller.Delete(id);
+
+        // Assert
+        Assert.NotNull(result);
+        var notFoundResult = result as NotFoundObjectResult;
+        Assert.NotNull(notFoundResult);
+    }
+
+    [Fact]
+    public async Task Delete_ReturnsBadRequestObjectResult_WhenUnknownFailure()
+    {
+        // Arrange
+        const int id = 1;
+        _songsServiceMock.Setup(s => s.DeleteSongAsync(id)).ThrowsAsync(new Exception());
+
+        // Act
+        var result = await _controller.Delete(id);
+
+        // Assert
+        Assert.NotNull(result);
+        var badRequestObjectResult = result as BadRequestObjectResult;
+        Assert.NotNull(badRequestObjectResult);
     }
 }

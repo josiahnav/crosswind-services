@@ -31,4 +31,17 @@ public class SongRepository : ISongRepository
         await _context.SaveChangesAsync();
         return song;
     }
+
+    public async Task DeleteSongAsync(int id)
+    {
+        var entity = await _context.Songs.FindAsync(id);
+
+        if (entity == null)
+        {
+            throw new KeyNotFoundException();
+        }
+
+        _context.Songs.Remove(entity);
+        await _context.SaveChangesAsync();
+    }
 }

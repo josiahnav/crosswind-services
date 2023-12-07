@@ -1,4 +1,4 @@
-import React, {forwardRef, useState} from 'react';
+import React, {forwardRef, useCallback, useState} from 'react';
 import Modal from "../Modal.tsx";
 import {AddSongModalProps} from "./AddSongModal.interfaces.ts";
 import styles from "./AddSongModal.module.css";
@@ -11,13 +11,26 @@ const AddSongModal = forwardRef<HTMLDialogElement, AddSongModalProps>(function A
         composer: "",
         bpm: ""
     });
-    const maxBpm = 999;
     const [didEdit, setDidEdit] = useState({
         title: false,
         composer: false,
         bpm: false
     });
+    const maxBpm = 999;
     const titleIsInvalid = didEdit.title && formValues.title.length == 0;
+
+    const resetFormValues = () => {
+        setFormValues({
+            title: "",
+            composer: "",
+            bpm: ""
+        });
+        setDidEdit({
+            title: false,
+            composer: false,
+            bpm: false
+        });
+    };
 
     const handleInputChange = (identifier: string, value: any) => {
         // Ensures that the user cannot enter a BPM greater than 999
@@ -74,8 +87,15 @@ const AddSongModal = forwardRef<HTMLDialogElement, AddSongModalProps>(function A
         }
     };
 
+    const handleClose = useCallback(() => {
+        const timeoutId = setTimeout(() => {
+            resetFormValues();
+        }, 10);
+        return () => clearTimeout(timeoutId);
+    }, []);
+
     return (
-        <Modal ref={ref} header="Add Song" onClick={props.onClick}>
+        <Modal ref={ref} header="Add Song" onClick={props.onClick} onClose={handleClose} onCancel={handleClose}>
             <form onSubmit={handleSubmit}>
                 <div className="mb-4">
                     <label htmlFor="titleInput" className="text-xs text-zinc-600">Title *</label>

@@ -1,77 +1,40 @@
-import React, {forwardRef, useCallback, useState} from 'react';
+import {useEffect} from 'react';
 import Modal from "../Modal.tsx";
-import {AddSongModalProps} from "./AddSongModal.interfaces.ts";
+import {AddSongModalFormValues, AddSongModalProps} from "./AddSongModal.interfaces.ts";
 import styles from "./AddSongModal.module.css";
+import {useForm} from "react-hook-form";
 import {CreateSongDto} from "../../../models/CreateSongDto.ts";
 
-const AddSongModal = forwardRef<HTMLDialogElement, AddSongModalProps>(function AddSongModal(props, ref) {
-
-    const [formValues, setFormValues] = useState({
-        title: "",
-        composer: "",
-        bpm: ""
-    });
-    const [didEdit, setDidEdit] = useState({
-        title: false,
-        composer: false,
-        bpm: false
-    });
-    const maxBpm = 999;
-    const titleIsInvalid = didEdit.title && formValues.title.length == 0;
-
-    const resetFormValues = () => {
-        setFormValues({
-            title: "",
-            composer: "",
-            bpm: ""
-        });
-        setDidEdit({
-            title: false,
-            composer: false,
-            bpm: false
-        });
-    };
-
-    const handleInputChange = (identifier: string, value: any) => {
-        // Ensures that the user cannot enter a BPM greater than 999
-        if (identifier == "bpm") {
-            value = value <= maxBpm ? value : maxBpm;
+export default function AddSongModal(props: AddSongModalProps) {
+    const {
+        register,
+        reset,
+        handleSubmit,
+        formState: {errors}
+    } = useForm<AddSongModalFormValues>({
+        defaultValues: {
+            title: '',
+            composer: undefined,
+            bpm: undefined
         }
+    });
 
-        setFormValues(prevState => ({
-            ...prevState,
-            [identifier]: value
-        }));
+    useEffect(() => {
+        reset();
+    }, [props.isOpen, reset])
 
-        setDidEdit(prevState => ({
-            ...prevState,
-            [identifier]: false
-        }));
+    const handleCancel = () => {
+        props.onCancel();
     }
 
-    const handleInputBlur = (identifier: string) => {
-        setDidEdit(prevState => ({
-            ...prevState,
-            [identifier]: true
-        }));
-    };
-
-    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-
-        if (formValues.title.length == 0) {
-            setDidEdit(prevState => ({
-                ...prevState,
-                title: true
-            }));
-            return;
-        }
-
+    const submitHandler = async (data: AddSongModalFormValues) => {
         const dto: CreateSongDto = {
-            title: formValues.title,
-            composer: formValues.composer.length > 0 ? formValues.composer : undefined,
-            bpm: formValues.bpm.length > 0 ? parseFloat(formValues.bpm) : undefined
+            title: data.title,
+            composer: data.composer,
+            bpm: data.bpm
         };
+
+        console.log(dto);
 
         const response = await fetch(`${import.meta.env.VITE_PUBLIC_API_URL}/song`, {
             method: 'POST',
@@ -85,66 +48,72 @@ const AddSongModal = forwardRef<HTMLDialogElement, AddSongModalProps>(function A
             const createdSong = await response.json();
             props.onAddSong(createdSong);
         }
-    };
-
-    const handleClose = useCallback(() => {
-        const timeoutId = setTimeout(() => {
-            resetFormValues();
-        }, 10);
-        return () => clearTimeout(timeoutId);
-    }, []);
+    }
 
     return (
-        <Modal ref={ref} header="Add Song" onClick={props.onClick} onClose={handleClose} onCancel={handleClose}>
-            <form onSubmit={handleSubmit}>
+        <Modal header="Add Song" isOpen={props.isOpen} onCancel={handleCancel}>
+            <form onSubmit={handleSubmit(submitHandler)}>
                 <div className="mb-4">
                     <label htmlFor="titleInput" className="text-xs text-zinc-600">Title *</label>
                     <br/>
                     <input type="text"
                            id="titleInput"
-                           name="title"
-                           className="p-2 w-96 bg-zinc-50 border border-zinc-300 rounded focus:outline-none"
-                           value={formValues.title}
-                           onBlur={() => handleInputBlur("title")}
-                           onChange={(event) => handleInputChange("title", event.target.value)}/>
+                           {...register("title", {
+                               required: 'Required', maxLength: {
+                                   value: 30,
+                                   message: 'Cannot be longer than 30 characters'
+                               }
+                           })}
+                           className="p-2 w-96 bg-zinc-50 border border-zinc-300 rounded focus:outline-none"/>
                     <br/>
-                    {titleIsInvalid && <span className="text-red-500 text-xs">Please enter a title.</span>}
+                    <span className="text-red-500 text-xs">{errors.title?.message}</span>
                 </div>
                 <div className="mb-4">
                     <label htmlFor="composerInput" className="text-xs text-zinc-600">Composer</label>
                     <br/>
                     <input type="text"
                            id="composerInput"
-                           name="composer"
-                           className="p-2 w-96 bg-zinc-50 border border-zinc-300 rounded focus:outline-none"
-                           value={formValues.composer}
-                           onBlur={() => handleInputBlur("composer")}
-                           onChange={(event) => handleInputChange("composer", event.target.value)}/>
+                           {...register("composer", {
+                               maxLength: {
+                                   value: 100,
+                                   message: 'Cannot be longer than 100 characters'
+                               },
+                               setValueAs: value => value === '' ? undefined : value
+                           })}
+                           className="p-2 w-96 bg-zinc-50 border border-zinc-300 rounded focus:outline-none"/>
+                    <br/>
+                    <span className="text-red-500 text-xs">{errors.composer?.message}</span>
                 </div>
                 <div className="mb-4">
                     <label htmlFor="bpmInput" className="text-xs text-zinc-600">How fast is this song?</label>
                     <br/>
                     <div className="relative inline-block">
                         <input type="number"
-                               max={maxBpm}
                                id="bpmInput"
-                               name="bpm"
-                               value={formValues.bpm}
-                               onChange={(event) => handleInputChange("bpm", event.target.value)}
-                               onBlur={() => handleInputBlur("bpm")}
+                               {...register("bpm", {
+                                   min: {
+                                       value: 0,
+                                       message: 'Must be 0 - 999'
+                                   },
+                                   max: {
+                                       value: 999,
+                                       message: 'Must be 0 - 999'
+                                   },
+                                   setValueAs: value => value === '' ? undefined : Number(value)
+                               })}
                                className={`${styles['numberInput']} p-2 pr-14 w-32 bg-zinc-50 border border-zinc-300 rounded focus:outline-none`}/>
                         <span className="absolute right-2 top-1/2 -translate-y-1/2 text-zinc-600">BPM</span>
                     </div>
+                    <br/>
+                    <span className="text-red-500 text-xs">{errors.bpm?.message}</span>
                 </div>
                 <div className="mt-16 flex flex-row gap-2 justify-end">
                     <button type="button" className="bg-zinc-500 text-white p-3 rounded w-32"
-                            onClick={props.onCancelClick}>Cancel
+                            onClick={handleCancel}>Cancel
                     </button>
                     <button className="bg-blue-500 text-white p-3 rounded w-32">Submit</button>
                 </div>
             </form>
         </Modal>
     );
-});
-
-export default AddSongModal;
+}

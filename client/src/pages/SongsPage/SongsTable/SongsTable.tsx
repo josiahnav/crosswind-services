@@ -1,4 +1,4 @@
-import {useCallback, useRef, useState} from 'react';
+import {useCallback, useState} from 'react';
 import styles from "./styles.module.css";
 import {SongsTableProps} from "./SongsTable.interfaces.ts";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -6,10 +6,10 @@ import {faTrash} from "@fortawesome/free-solid-svg-icons";
 import DeleteSongModal from "../../../components/modals/DeleteSongModal/DeleteSongModal.tsx";
 
 export default function SongsTable(props: SongsTableProps) {
+
     const [selectedId, setSelectedId] = useState<number>();
     const [selectedTitle, setSelectedTitle] = useState<string>('');
-
-    const deleteSongDialogRef = useRef<HTMLDialogElement>(null);
+    const [deleteSongIsOpen, setDeleteSongIsOpen] = useState(false);
 
     const formatDate = (date: Date): string => {
         return new Intl.DateTimeFormat('en-US', {
@@ -19,21 +19,11 @@ export default function SongsTable(props: SongsTableProps) {
         }).format(date);
     };
 
-    const handleDeleteClick = (index: number) => {
+    const handleTrashIconClick = (index: number) => {
         setSelectedId(props.songs[index].id);
         setSelectedTitle(props.songs[index].title);
-        deleteSongDialogRef.current?.showModal();
+        setDeleteSongIsOpen(true);
     }
-
-    const handleDeleteDialogClick = useCallback((event: any) => {
-        if (event.target == deleteSongDialogRef.current) {
-            deleteSongDialogRef.current?.close();
-        }
-    }, []);
-
-    const handleDeleteCancelClick = useCallback(() => {
-        deleteSongDialogRef.current?.close();
-    }, []);
 
     const handleDeleteSong = useCallback(async () => {
         if (!selectedId) {
@@ -52,15 +42,18 @@ export default function SongsTable(props: SongsTableProps) {
             return;
         }
 
-        deleteSongDialogRef.current?.close();
+        setDeleteSongIsOpen(false)
         props.onDeleteSong(selectedId!);
     }, [props, selectedId, selectedTitle])
 
+    const handleDeleteSongCancel = () => {
+        setDeleteSongIsOpen(false);
+    };
+
     return (
         <>
-            <DeleteSongModal ref={deleteSongDialogRef}
-                             onClick={handleDeleteDialogClick}
-                             onCancelClick={handleDeleteCancelClick}
+            <DeleteSongModal isOpen={deleteSongIsOpen}
+                             onCancel={handleDeleteSongCancel}
                              onDeleteSong={handleDeleteSong}
                              title={selectedTitle}></DeleteSongModal>
             <table className={`border-separate border-spacing-0 border border-blue-300 rounded`}>
@@ -93,7 +86,7 @@ export default function SongsTable(props: SongsTableProps) {
                                     {s.lastScheduled ? formatDate(new Date(s.lastScheduled)) : '-'}
                                 </td>
                                 <td className="py-1.5 pr-2.5 border-t border-t-blue-300 text-neutral-500 cursor-pointer">
-                                    <button onClick={() => handleDeleteClick(index)}
+                                    <button onClick={() => handleTrashIconClick(index)}
                                             aria-label={`Delete song titled ${s.title}`}>
                                         <FontAwesomeIcon icon={faTrash}></FontAwesomeIcon>
                                     </button>
@@ -106,4 +99,4 @@ export default function SongsTable(props: SongsTableProps) {
             </table>
         </>
     );
-};
+}

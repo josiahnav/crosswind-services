@@ -1,30 +1,25 @@
-import {useCallback, useRef} from 'react';
+import {useCallback, useState} from 'react';
 import ActionButton from "../ActionButton/ActionButton.tsx";
 import AddSongModal from "../../../components/modals/AddSongModal/AddSongModal.tsx";
 import SongForTableDto from "../../../models/SongForTableDto.ts";
 import {SongsActionsProps} from "./SongsActions.interfaces.ts";
 
 export default function SongsActions(props: SongsActionsProps) {
-    const addSongDialogRef = useRef<HTMLDialogElement>(null);
 
-    const handleAddClick = useCallback(() => {
-        addSongDialogRef.current?.showModal();
-    }, []);
+    const [addSongIsOpen, setAddSongIsOpen] = useState(false);
 
-    const handleAddDialogClick = useCallback((event: any) => {
-        if (event.target == addSongDialogRef.current) {
-            addSongDialogRef.current?.close();
-        }
-    }, []);
-
-    const handleAddSongModalCancelClick = useCallback(() => {
-        addSongDialogRef.current?.close();
-    }, []);
+    const handleAddSongClick = () => {
+      setAddSongIsOpen(true);
+    };
 
     const handleAddSong = useCallback((createdSong: SongForTableDto) => {
-        addSongDialogRef.current?.close();
         props.onAddSong(createdSong);
+        setAddSongIsOpen(false);
     }, [props]);
+
+    const handleAddSongCancel = () => {
+        setAddSongIsOpen(false);
+    };
 
     const handleScheduleClick = useCallback(() => {
         console.log('Schedule');
@@ -32,13 +27,10 @@ export default function SongsActions(props: SongsActionsProps) {
 
     return (
         <div className="flex flex-row gap-6 mb-10 mx-auto">
-            <AddSongModal ref={addSongDialogRef}
-                          onClick={handleAddDialogClick}
-                          onCancelClick={handleAddSongModalCancelClick}
-                          onAddSong={handleAddSong}></AddSongModal>
-            <ActionButton title="Add" subtitle="a new worship song" onClick={handleAddClick}></ActionButton>
+            <AddSongModal onAddSong={handleAddSong} isOpen={addSongIsOpen} onCancel={handleAddSongCancel}></AddSongModal>
+            <ActionButton title="Add" subtitle="a new worship song" onClick={handleAddSongClick}></ActionButton>
             <ActionButton title="Schedule" subtitle="a Sunday worship song"
                           onClick={handleScheduleClick}></ActionButton>
         </div>
     );
-};
+}

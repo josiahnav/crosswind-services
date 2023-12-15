@@ -1,11 +1,13 @@
 import Header from "../components/Header.tsx";
 import {Outlet} from "react-router-dom";
 
-export default function RootLayout () {
+export default function RootLayout() {
     return (
         <div>
             <Header></Header>
-            <Outlet></Outlet>
+            <main>
+                <Outlet></Outlet>
+            </main>
         </div>
     );
 }

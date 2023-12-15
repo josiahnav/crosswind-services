@@ -1,16 +1,21 @@
 import './App.css'
 import SongsPage from "./pages/SongsPage/SongsPage.tsx";
-import Header from "./components/Header.tsx";
 import {createBrowserRouter, RouterProvider} from 'react-router-dom';
+import RootLayout from "./pages/RootLayout.tsx";
 
 const router = createBrowserRouter([
-    {path: 'songs', element: <SongsPage/>}
+    {
+        path: '/',
+        element: <RootLayout/>,
+        children: [
+            {path: 'songs', element: <SongsPage/>}
+        ]
+    }
 ]);
 
 function App() {
     return (
         <>
-            <Header></Header>
             <RouterProvider router={router}></RouterProvider>
         </>
     )

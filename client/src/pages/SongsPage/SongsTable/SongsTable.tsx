@@ -4,6 +4,7 @@ import {SongsTableProps} from "./SongsTable.interfaces.ts";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTrash} from "@fortawesome/free-solid-svg-icons";
 import DeleteSongModal from "../../../components/modals/DeleteSongModal/DeleteSongModal.tsx";
+import {useNavigate} from "react-router-dom";
 
 export default function SongsTable(props: SongsTableProps) {
 
@@ -11,12 +12,18 @@ export default function SongsTable(props: SongsTableProps) {
     const [selectedTitle, setSelectedTitle] = useState<string>('');
     const [deleteSongIsOpen, setDeleteSongIsOpen] = useState(false);
 
+    const navigate = useNavigate();
+
     const formatDate = (date: Date): string => {
         return new Intl.DateTimeFormat('en-US', {
             year: 'numeric',
             month: 'long',
             day: 'numeric'
         }).format(date);
+    };
+
+    const handleSongTitleClick = (songId: number) => {
+        navigate(`/songs/edit/${songId}`);
     };
 
     const handleTrashIconClick = (index: number) => {
@@ -77,7 +84,8 @@ export default function SongsTable(props: SongsTableProps) {
                     props.songs.map((s, index) => {
                         return (
                             <tr key={s.id}>
-                                <td className="py-1.5 pl-2.5 border-t border-t-blue-300">{s.title}</td>
+                                <td className="py-1.5 pl-2.5 border-t border-t-blue-300 cursor-pointer"
+                                    onClick={() => handleSongTitleClick(s.id)}>{s.title}</td>
                                 <td className="py-1.5 border-t border-t-blue-300 text-neutral-500">{s.bpm || '-'}</td>
                                 <td className="py-1.5 border-t border-t-blue-300 text-neutral-500">
                                     {formatDate(new Date(s.created))}

@@ -7,9 +7,9 @@ export default function EditPage() {
     return (
         <main className="mx-14 mt-10">
             {/*Header*/}
-            <div className="flex flex-row">
+            <div className="flex flex-row justify-between">
                 <h1 className="text-3xl">Things Of Heaven</h1>
-                <button className="bg-blue-500 text-white p-3 rounded w-32">Save</button>
+                <button className="bg-blue-500 text-white rounded px-4">Save</button>
             </div>
             <span className="text-zinc-600">Created on December 14, 2023</span>
             {/*Song-wide details*/}

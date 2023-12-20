@@ -7,7 +7,7 @@ export interface AddSongModalProps {
 }
 
 export interface AddSongModalFormValues {
-    title: string,
+    title?: string,
     composer?: string,
     bpm?: number
 }

@@ -4,6 +4,7 @@ import {AddSongModalFormValues, AddSongModalProps} from "./AddSongModal.interfac
 import styles from "./AddSongModal.module.css";
 import {useForm} from "react-hook-form";
 import {CreateSongDto} from "../../../models/CreateSongDto.ts";
+import TextInput from "../../forms/TextInput/TextInput.tsx";
 
 export default function AddSongModal(props: AddSongModalProps) {
     const {
@@ -29,7 +30,7 @@ export default function AddSongModal(props: AddSongModalProps) {
 
     const submitHandler = async (data: AddSongModalFormValues) => {
         const dto: CreateSongDto = {
-            title: data.title,
+            title: data.title!,
             composer: data.composer,
             bpm: data.bpm
         };
@@ -53,37 +54,31 @@ export default function AddSongModal(props: AddSongModalProps) {
     return (
         <Modal header="Add Song" isOpen={props.isOpen} onCancel={handleCancel}>
             <form onSubmit={handleSubmit(submitHandler)}>
-                <div className="mb-4">
-                    <label htmlFor="titleInput" className="text-xs text-zinc-600">Title *</label>
-                    <br/>
-                    <input type="text"
-                           id="titleInput"
-                           {...register("title", {
+                <TextInput id="titleInput"
+                           name="title"
+                           register={register}
+                           registerOptions={{
                                required: 'Required', maxLength: {
                                    value: 30,
                                    message: 'Cannot be longer than 30 characters'
                                }
-                           })}
-                           className="p-2 w-96 bg-zinc-50 border border-zinc-300 rounded focus:outline-none"/>
-                    <br/>
-                    <span className="text-red-500 text-xs">{errors.title?.message}</span>
-                </div>
-                <div className="mb-4">
-                    <label htmlFor="composerInput" className="text-xs text-zinc-600">Composer</label>
-                    <br/>
-                    <input type="text"
-                           id="composerInput"
-                           {...register("composer", {
+                           }}>Title *</TextInput>
+                <br/>
+                <span className="text-red-500 text-xs">{errors.title?.message}</span>
+                <br/>
+                <TextInput id="composerInput"
+                           name="composer"
+                           register={register}
+                           registerOptions={{
                                maxLength: {
                                    value: 100,
                                    message: 'Cannot be longer than 100 characters'
                                },
                                setValueAs: value => value === '' ? undefined : value
-                           })}
-                           className="p-2 w-96 bg-zinc-50 border border-zinc-300 rounded focus:outline-none"/>
-                    <br/>
-                    <span className="text-red-500 text-xs">{errors.composer?.message}</span>
-                </div>
+                           }}>Composer</TextInput>
+                <br/>
+                <span className="text-red-500 text-xs">{errors.composer?.message}</span>
+                <br/>
                 <div className="mb-4">
                     <label htmlFor="bpmInput" className="text-xs text-zinc-600">How fast is this song?</label>
                     <br/>
